@@ -1,0 +1,27 @@
+# Lingkungan & Kunci Rahasia
+.env
+*.env
+
+# PHP & Composer
+vendor/
+composer.phar
+*.sqlite
+
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.lock
+
+# IDE & Editor
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

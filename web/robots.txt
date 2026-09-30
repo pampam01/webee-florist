@@ -1,0 +1,7 @@
+# robots.txt for Webee Florist by utiy
+User-agent: *
+Allow: /
+Disallow: /backend/
+
+# Sitemap
+Sitemap: https://webee-florist.com/sitemap.xml

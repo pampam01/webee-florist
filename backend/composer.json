@@ -1,0 +1,30 @@
+{
+    "name": "webee-florist/backend-mikroservis",
+    "description": "Backend Mikroservis PHP Native Toko Bunga Webee Florist dengan Standalone Eloquent ORM",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "WebeeFlorist\\": "layanan_bersama/",
+            "WebeeFlorist\\Layanan\\Autentikasi\\": "layanan/layanan_autentikasi/",
+            "WebeeFlorist\\Layanan\\Katalog\\": "layanan/layanan_katalog/",
+            "WebeeFlorist\\Layanan\\Keranjang\\": "layanan/layanan_keranjang/",
+            "WebeeFlorist\\Layanan\\Pesanan\\": "layanan/layanan_pesanan/",
+            "WebeeFlorist\\Layanan\\Pembayaran\\": "layanan/layanan_pembayaran/",
+            "WebeeFlorist\\Layanan\\Admin\\": "layanan/layanan_admin/"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "illuminate/database": "^10.0 || ^11.0",
+        "illuminate/events": "^10.0 || ^11.0",
+        "vlucas/phpdotenv": "^5.6",
+        "bramus/router": "^1.6",
+        "firebase/php-jwt": "^6.10"
+    },
+    "scripts": {
+        "server": "php -S 0.0.0.0:8000 gerbang_api/index.php",
+        "migrasi": "php perintah.php migrasi",
+        "benih": "php perintah.php benih"
+    }
+}

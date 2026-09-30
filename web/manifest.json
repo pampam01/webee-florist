@@ -1,0 +1,35 @@
+{
+    "name": "Webee Florist by utiy",
+    "short_name": "Webee Florist",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FAF7F2",
+    "theme_color": "#6B4435",
+    "description": "Atelier Toko Bunga Segar Online dengan Rangkaian Klasik Romantis Perancis oleh Florist Utiy.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
