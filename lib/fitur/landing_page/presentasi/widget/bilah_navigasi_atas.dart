@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webee_florist/fitur/admin/presentasi/halaman/halaman_dashboard_admin.dart';
 import 'package:webee_florist/fitur/autentikasi/presentasi/penyedia/penyedia_autentikasi.dart';
+import 'package:webee_florist/fitur/katalog_bunga/presentasi/halaman/halaman_katalog_bunga.dart';
 import 'package:webee_florist/fitur/keranjang/presentasi/penyedia/penyedia_keranjang.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
 import 'dialog_masuk_cepat.dart';
@@ -95,7 +96,13 @@ class BilahNavigasiAtas extends ConsumerWidget {
                   children: [
                     _itemMenuNavigasi(context, 'Beranda', () => padaPilihSeksi?.call(0)),
                     _itemMenuNavigasi(context, 'Koleksi Bunga', () => padaPilihSeksi?.call(1)),
-                    _itemMenuNavigasi(context, 'Katalog', () => padaPilihSeksi?.call(2)),
+                    _itemMenuNavigasi(
+                      context,
+                      'Katalog',
+                      () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const HalamanKatalogBunga()),
+                      ),
+                    ),
                     _itemMenuNavigasi(context, 'Filosofi', () => padaPilihSeksi?.call(3)),
                     _itemMenuNavigasi(context, 'Keunggulan', () => padaPilihSeksi?.call(4)),
                     _itemMenuNavigasi(context, 'Ulasan', () => padaPilihSeksi?.call(5)),

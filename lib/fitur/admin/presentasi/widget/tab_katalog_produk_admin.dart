@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../inti/konstanta/konstanta_api.dart';
 import '../../../../inti/konstanta/warna_aplikasi.dart';
 import '../../../../inti/utilitas/format_rupiah.dart';
 import '../../../katalog_bunga/data/model/kategori_model.dart';
 import '../../../katalog_bunga/data/model/produk_model.dart';
 import '../../../katalog_bunga/presentasi/penyedia/penyedia_katalog.dart';
+import '../penyedia/penyedia_admin.dart';
 import 'dialog_input_produk_bunga.dart';
 
 class TabKatalogProdukAdmin extends ConsumerStatefulWidget {
@@ -24,12 +26,17 @@ class _TabKatalogProdukAdminState extends ConsumerState<TabKatalogProdukAdmin> {
     super.dispose();
   }
 
-  void _bukaDialogTambahEdit({ProdukBungaModel? produk}) {
-    showDialog(
+  void _bukaDialogTambahEdit({ProdukBungaModel? produk}) async {
+    final hasil = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (_) => DialogInputProdukBunga(produk: produk),
     );
+    if (hasil == true && mounted) {
+      ref.invalidate(daftarProdukAdminProvider);
+      ref.invalidate(daftarProdukProvider);
+      ref.invalidate(ringkasanAdminProvider);
+    }
   }
 
   void _konfirmasiHapus(ProdukBungaModel produk) {
@@ -529,7 +536,7 @@ class _TabKatalogProdukAdminState extends ConsumerState<TabKatalogProdukAdmin> {
                           clipBehavior: Clip.antiAlias,
                           child: (item.urlGambar ?? '').isNotEmpty
                               ? Image.network(
-                                  item.urlGambar!,
+                                  KonstantaApi.formatUrlGambar(item.urlGambar),
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, __, ___) => const Icon(
                                     Icons.local_florist_rounded,
@@ -798,7 +805,7 @@ class _TabKatalogProdukAdminState extends ConsumerState<TabKatalogProdukAdmin> {
                     clipBehavior: Clip.antiAlias,
                     child: (item.urlGambar ?? '').isNotEmpty
                         ? Image.network(
-                            item.urlGambar!,
+                            KonstantaApi.formatUrlGambar(item.urlGambar),
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => const Icon(
                               Icons.local_florist_rounded,

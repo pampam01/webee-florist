@@ -209,9 +209,14 @@ class KontrollerKatalog extends PengontrolDasar
         $data = $this->ambilDataJson();
 
         if (BasisData::periksaKoneksi()) {
-            $hasil = $this->repositori->perbaruiData($id, $data);
-            if ($hasil) {
-                $this->tanggapanSukses($hasil, 'Data produk bunga berhasil diperbarui.');
+            try {
+                $hasil = $this->repositori->perbaruiData($id, $data);
+                if ($hasil) {
+                    $this->tanggapanSukses($hasil, 'Data produk bunga berhasil diperbarui.');
+                    return;
+                }
+            } catch (Throwable $e) {
+                $this->tanggapanGagal('Gagal memperbarui data produk: ' . $e->getMessage(), 422);
                 return;
             }
         }

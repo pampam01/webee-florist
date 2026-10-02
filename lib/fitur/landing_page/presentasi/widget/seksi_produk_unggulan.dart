@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:webee_florist/fitur/katalog_bunga/data/model/produk_model.dart';
 import 'package:webee_florist/fitur/katalog_bunga/presentasi/halaman/halaman_detail_produk.dart';
+import 'package:webee_florist/fitur/katalog_bunga/presentasi/halaman/halaman_katalog_bunga.dart';
 import 'package:webee_florist/fitur/katalog_bunga/presentasi/penyedia/penyedia_katalog.dart';
 import 'package:webee_florist/fitur/keranjang/presentasi/penyedia/penyedia_keranjang.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
@@ -133,6 +134,44 @@ class SeksiProdukUnggulan extends ConsumerWidget {
                 error: (err, _) => Padding(
                   padding: const EdgeInsets.all(32),
                   child: Text('Gagal memuat produk: $err'),
+                ),
+              ),
+
+              const SizedBox(height: 36),
+
+              // Tombol Navigasi Halaman Katalog Lengkap
+              Center(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const HalamanKatalogBunga(),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                    side: const BorderSide(color: WarnaAplikasi.coklatMawar, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  icon: const Icon(Icons.grid_view_rounded, size: 18, color: WarnaAplikasi.coklatMawar),
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Jelajahi Seluruh Katalog Bunga',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: WarnaAplikasi.coklatMawar,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward_rounded, size: 16, color: WarnaAplikasi.coklatMawar),
+                    ],
+                  ),
                 ),
               ),
             ],

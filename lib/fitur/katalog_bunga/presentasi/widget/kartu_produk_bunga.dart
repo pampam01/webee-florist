@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webee_florist/fitur/katalog_bunga/data/model/produk_model.dart';
+import 'package:webee_florist/fitur/katalog_bunga/presentasi/widget/slider_foto_bunga.dart';
+import 'package:webee_florist/inti/konstanta/konstanta_api.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
 import 'package:webee_florist/inti/utilitas/format_rupiah.dart';
 
@@ -44,31 +46,40 @@ class KartuProdukBunga extends StatelessWidget {
                     child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
-                      child: produk.urlGambar != null && produk.urlGambar!.isNotEmpty
-                          ? Image.network(
-                              produk.urlGambar!,
+                      child: produk.semuaFoto.length > 1
+                          ? SliderFotoBunga(
+                              daftarFoto: produk.semuaFoto,
+                              tinggi: double.infinity,
                               fit: BoxFit.cover,
-                              errorBuilder: (ctx, err, stack) => Container(
-                                color: Colors.grey.shade100,
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.local_florist,
-                                    size: 48,
-                                    color: WarnaAplikasi.utama,
-                                  ),
-                                ),
-                              ),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                              tampilkanThumbnailBawah: false,
+                              bisaDiKlikZoom: false,
                             )
-                          : Container(
-                              color: Colors.grey.shade100,
-                              child: const Center(
-                                child: Icon(
-                                  Icons.local_florist,
-                                  size: 48,
-                                  color: WarnaAplikasi.utama,
-                                ),
-                              ),
-                            ),
+                          : (produk.urlGambar != null && produk.urlGambar!.isNotEmpty
+                              ? Image.network(
+                                  KonstantaApi.formatUrlGambar(produk.urlGambar),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (ctx, err, stack) => Container(
+                                    color: Colors.grey.shade100,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.local_florist,
+                                        size: 48,
+                                        color: WarnaAplikasi.utama,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  color: Colors.grey.shade100,
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.local_florist,
+                                      size: 48,
+                                      color: WarnaAplikasi.utama,
+                                    ),
+                                  ),
+                                )),
                     ),
                   ),
                   // Badge Stok / Ketersediaan

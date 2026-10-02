@@ -94,6 +94,13 @@ class RepositoriKatalog extends RepositoriDasar
         $produk = ProdukBunga::find($id);
         if (!$produk) return null;
 
+        if (isset($data['foto_galeri']) && is_string($data['foto_galeri'])) {
+            $decoded = json_decode($data['foto_galeri'], true);
+            if (is_array($decoded)) {
+                $data['foto_galeri'] = $decoded;
+            }
+        }
+
         $produk->fill($data);
         if (!empty($data['nama_bunga']) && empty($data['slug'])) {
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['nama_bunga'])));

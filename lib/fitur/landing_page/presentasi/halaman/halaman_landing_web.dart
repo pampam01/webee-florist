@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:webee_florist/fitur/autentikasi/presentasi/penyedia/penyedia_autentikasi.dart';
+import 'package:webee_florist/fitur/katalog_bunga/presentasi/halaman/halaman_katalog_bunga.dart';
 import 'package:webee_florist/fitur/katalog_bunga/presentasi/penyedia/penyedia_katalog.dart';
 import 'package:webee_florist/fitur/keranjang/presentasi/penyedia/penyedia_keranjang.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
@@ -131,7 +132,9 @@ class _HalamanLandingWebState extends ConsumerState<HalamanLandingWeb> {
                     }),
                     _itemDrawer(Icons.grid_view_outlined, 'Katalog Produk', () {
                       Navigator.of(context).pop();
-                      _gulirKeSeksi(2);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const HalamanKatalogBunga()),
+                      );
                     }),
                     _itemDrawer(Icons.auto_stories_outlined, 'Filosofi Florist', () {
                       Navigator.of(context).pop();
