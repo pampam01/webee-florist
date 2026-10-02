@@ -36,4 +36,19 @@ class KonstantaApi {
   static const String konfirmasiPembayaran = '/pembayaran/konfirmasi';
 
   static const String adminDashboard = '/admin/dashboard';
+  static const String adminPesanan = '/pesanan/admin/semua';
+  static const String adminProduk = '/katalog/admin/produk';
+  static const String unggahFoto = '/katalog/unggah';
+
+  static String formatUrlGambar(String? url) {
+    if (url == null || url.trim().isEmpty) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    final hostDasar = urlDasar.replaceAll('/api/v1', '');
+    if (url.startsWith('/')) {
+      return '$hostDasar$url';
+    }
+    return '$hostDasar/$url';
+  }
 }

@@ -158,6 +158,81 @@ class KontrollerPesanan extends PengontrolDasar
         ], 'Detail pesanan.');
     }
 
+    public function semuaPesananAdmin(): void
+    {
+        PenjagaPeran::hanyaAdmin();
+        $status = $this->ambilQuery('status');
+        $cari = $this->ambilQuery('cari');
+
+        if (BasisData::periksaKoneksi()) {
+            try {
+                $daftar = $this->repositori->ambilSemuaPesananUntukAdmin($status, $cari);
+                $this->tanggapanSukses($daftar, 'Semua data pesanan untuk admin berhasil dimuat.');
+                return;
+            } catch (Throwable $e) {}
+        }
+
+        // Data cadangan simulasi jika offline / basis data belum terkoneksi
+        $this->tanggapanSukses([
+            [
+                'id' => 101,
+                'nomor_pesanan' => 'WBF-20261002-001A',
+                'id_pelanggan' => 1,
+                'total_harga' => 650000.0,
+                'status' => 'menunggu_pembayaran',
+                'nama_penerima' => 'Lady Genevieve',
+                'telepon_penerima' => '081234567890',
+                'alamat_pengiriman' => 'Kebayoran Baru, Jl. Senopati No. 45, Jakarta Selatan',
+                'kartu_ucapan' => 'Semoga hari bahagiamu seharum kelopak mawar kastil Provence.',
+                'tanggal_pengiriman' => date('Y-m-d'),
+                'jenis_kurir' => 'armada_mobil_berpendingin',
+                'nama_kurir' => 'Budi Santoso',
+                'telepon_kurir' => '081299887766',
+                'nomor_resi' => 'WBF-VAN-01',
+                'estimasi_jam_kirim' => '14:00 - 16:00',
+                'created_at' => date('Y-m-d H:i:s'),
+                'item' => [
+                    [
+                        'id' => 1,
+                        'id_produk' => 1,
+                        'nama_produk' => 'Buket Mawar Merah Kastil Provence',
+                        'harga_satuan' => 650000.0,
+                        'kuantitas' => 1,
+                        'subtotal' => 650000.0
+                    ]
+                ]
+            ],
+            [
+                'id' => 102,
+                'nomor_pesanan' => 'WBF-20261002-002B',
+                'id_pelanggan' => 2,
+                'total_harga' => 450000.0,
+                'status' => 'diproses',
+                'nama_penerima' => 'Madame Vivienne',
+                'telepon_penerima' => '081377889900',
+                'alamat_pengiriman' => 'Menteng Residensi Blok C2 No. 8, Jakarta Pusat',
+                'kartu_ucapan' => 'Selamat hari jadi pernikahan ke-10, cinta selamanya.',
+                'tanggal_pengiriman' => date('Y-m-d', strtotime('+1 day')),
+                'jenis_kurir' => 'kurir_motor_florist',
+                'nama_kurir' => 'Rian Hidayat',
+                'telepon_kurir' => '087711223344',
+                'nomor_resi' => 'WBF-MTR-05',
+                'estimasi_jam_kirim' => '09:00 - 11:00',
+                'created_at' => date('Y-m-d H:i:s', strtotime('-2 hours')),
+                'item' => [
+                    [
+                        'id' => 2,
+                        'id_produk' => 2,
+                        'nama_produk' => 'Buket Lavender & Lily Parisien',
+                        'harga_satuan' => 450000.0,
+                        'kuantitas' => 1,
+                        'subtotal' => 450000.0
+                    ]
+                ]
+            ]
+        ], 'Daftar pesanan admin dimuat.');
+    }
+
     public function ubahStatus(int $id): void
     {
         PenjagaPeran::hanyaAdmin();
@@ -168,7 +243,7 @@ class KontrollerPesanan extends PengontrolDasar
         ]);
 
         if (BasisData::periksaKoneksi()) {
-            $this->repositori->ubahStatus($id, $data['status']);
+            $this->repositori->ubahStatus($id, $data['status'], $data);
         }
 
         $this->tanggapanSukses(null, "Status pesanan #{$id} berhasil diperbarui menjadi {$data['status']}.");

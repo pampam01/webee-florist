@@ -17,6 +17,7 @@ class ProdukBunga extends ModelDasar
         'harga',
         'stok',
         'gambar_url',
+        'foto_galeri',
         'apakah_unggulan',
         'status_tersedia',
     ];
@@ -26,6 +27,7 @@ class ProdukBunga extends ModelDasar
         'id_kategori' => 'integer',
         'harga' => 'float',
         'stok' => 'integer',
+        'foto_galeri' => 'array',
         'apakah_unggulan' => 'boolean',
         'status_tersedia' => 'boolean',
     ];

@@ -1,0 +1,158 @@
+================================================================================
+ROADMAP & DAFTAR FITUR ADMIN DASHBOARD — WEBEE FLORIST BY UTIY
+================================================================================
+Dokumen ini merangkum seluruh rencana fitur Panel Administrator Webee Florist.
+Pengembangan akan dilakukan secara bertahap (satu persatu) agar kode tetap rapi,
+modular, bebas bug, dan mudah dipelihara.
+
+Prinsip Utama:
+- Sederhana, Intuitif, dan User-Friendly (mudah dipakai kasir & perangkai bunga).
+- Bebas Emoji Kasual (menggunakan ikon Material resmi dan tipografi elegan).
+- Mengikuti Palet Resmi (#6B4435, #FAF7F2, #C59B27, #C87D75, #2D1F1B).
+- Terorganisir dalam 3 Tab Utama di satu halaman tanpa navigasi bertingkat.
+
+================================================================================
+BAGIAN 1: TAB 1 — PESANAN MASUK, TRANSAKSI & LOGISTIK PENGIRIMAN
+================================================================================
+Fokus: Mengelola pesanan pelanggan dari pembayaran terverifikasi, alur perakitan 
+buket bunga, penugasan kurir, hingga barang diterima pelanggan.
+
+[✓] 1.1 Tabel Pesanan Masuk & Transaksi Terstruktur:
+    - Kolom Nomor Invoice (misal: WBF-20261002-001).
+    - Kolom Nama Pemesan & Kontak Telepon/WhatsApp.
+    - Kolom Nama Penerima & Alamat Pengantaran Lengkap.
+    - Kolom Jadwal Pengantaran (Tanggal & Estimasi Jam Pengantaran).
+    - Kolom Rincian Item Buket & Kuantitas.
+    - Kolom Metode Pembayaran (QRIS Instan / Transfer Bank BCA).
+    - Kolom Total Pembayaran (Rupiah).
+    - Kolom Lencana Status Alur Kerja Florist.
+
+[✓] 1.2 Filter Status & Kolom Pencarian Cepat:
+    - Chip filter 1-klik: [Semua] [Menunggu Bayar] [Dirangkai] [Dikirim] [Selesai].
+    - Kolom pencarian instan (Nomor Invoice, Nama Pemesan, Nama Penerima).
+
+[✓] 1.3 Alur Kerja Florist 4 Status (Tombol Aksi 1-Klik):
+    - Status 1: Menunggu Bayar (Aksi: Verifikasi Pembayaran).
+    - Status 2: Sedang Dirangkai (Aksi: Florist mulai merangkai bunga segar).
+    - Status 3: Dalam Pengiriman Kurir (Aksi: Serahkan ke kurir pengantar).
+    - Status 4: Selesai / Terkirim (Aksi: Tandai pesanan telah sampai dengan aman).
+
+[✓] 1.4 Informasi Logistik & Armada Pengantar ("Dikirim Pakai Apa"):
+    - Modal/Pilihan opsi kurir saat status diubah ke 'Dikirim':
+      * Armada Mobil Florist Berpendingin (Bunga Meja Kaca, Bunga Papan, Buket Mewah).
+      * Kurir Motor Khusus Florist (Buket Standar dengan Tas Pelindung).
+      * Kurir Eksternal Instan (GrabExpress / GoSend).
+    - Form Input: Nama Driver Pengantar & Nomor Telepon/WhatsApp Driver.
+    - Form Input: Nomor Resi / Bukti Antar Internal.
+
+[✓] 1.5 Inspeksi Kartu Ucapan Personal & Catatan Khusus Florist:
+    - Tombol pop-up "Lihat Kartu Ucapan":
+      * Menampilkan isi teks ucapan pelanggan dengan format kertas kaligrafi.
+      * Tombol 1-klik "Salin Teks Ucapan" ke clipboard untuk kaligrafer/pencetak.
+    - Tampilan Catatan Khusus Pelanggan (misal: "Warna pita emas", "Antar sebelum jam 11 siang").
+
+[✓] 1.6 Fitur Khusus: 1-Klik Kirim Info Pengantaran ke WhatsApp Driver Kurir:
+    - Tombol yang otomatis men-generate template pesan WhatsApp ke kurir:
+      "Tugas Antar Webee Florist:
+       No. Pesanan: [No]
+       Penerima: [Nama] ([No HP])
+       Alamat: [Alamat Lengkap]
+       Jadwal Tiba: [Tanggal & Jam]
+       Buket: [Daftar Item]
+       Catatan: [Catatan Pengantaran]"
+
+[✓] 1.7 Indikator Urgensi Waktu Pengantaran (Delivery Deadline Alert):
+    - Badge warna visual pada jadwal kirim:
+      * Merah  : Harus diantar Hari Ini.
+      * Kuning : Pengantaran Terjadwal Besok.
+      * Hijau  : Pengantaran Tanggal Mendatang.
+
+================================================================================
+BAGIAN 2: TAB 2 — MANAJEMEN KATALOG & INPUT PRODUK BARU
+================================================================================
+Fokus: Menambah rangkaian bunga baru ke toko online dan memperbarui stok harian.
+
+[✓] 2.1 Formulir Input Produk Bunga Baru (Ringkas & Terpandu):
+    - Input Nama Rangkaian Bunga (misal: "Royal Velvet Red Roses 24 Tangkai").
+    - Pilihan Dropdown Kategori (Buket Mawar, Bunga Meja, Buket Wisuda, Bunga Papan).
+    - Input Harga Jual (Rupiah).
+    - Input Jumlah Stok Tersedia (Unit buket).
+    - Input URL Gambar / Pratinjau Foto Buket Bunga.
+    - Input Deskripsi & Filosofi Rangkaian Bunga.
+    - Sakelar (Switch): "Buket Unggulan" (Tampil di Hero/Katalog Utama Landing Page).
+    - Sakelar (Switch): "Status Ketersediaan" (Tersedia / Musiman Habis).
+    - Tombol "Simpan Produk ke Katalog".
+
+[✓] 2.2 Tabel Inventaris Bunga Aktif:
+    - Daftar seluruh produk bunga dengan thumbnail foto mini, nama, kategori, harga, dan stok.
+    - Indikator visual jika stok tersisa sedikit (< 5 unit).
+
+[✓] 2.3 Penyesuaian Stok Cepat (Inline Quick Stock Adjust):
+    - Tombol cepat [+] dan [-] langsung pada baris tabel untuk menambah/mengurangi stok 
+      tanpa perlu membuka form edit panjang.
+
+[✓] 2.4 Sakelar Cepat Ketersediaan Produk:
+    - Tombol switch langsung di tabel untuk mengaktifkan / menonaktifkan bunga jika pasokan 
+      bunga segar subuh hari sedang tidak tersedia di pasar.
+
+[✓] 2.5 Aksi Edit & Hapus Produk:
+    - Modal edit data produk lengkap.
+    - Konfirmasi hapus produk yang aman.
+
+================================================================================
+BAGIAN 3: TAB 3 — LAPORAN PENJUALAN & ANALITIK TOKO
+================================================================================
+Fokus: Memberikan data omset dan wawasan bisnis yang jelas dan informatif bagi pemilik toko.
+
+[ ] 3.1 Kartu Indikator Kinerja Utama (Executive KPI Cards):
+    - Kartu 1: Total Omset / Pendapatan Bersih (Format Rupiah resmi).
+    - Kartu 2: Total Transaksi Pesanan Berhasil.
+    - Kartu 3: Antrean Bunga Perlu Dirangkai Hari Ini.
+    - Kartu 4: Peringatan Varian Bunga dengan Stok Menipis.
+
+[ ] 3.2 Filter Rentang Waktu Laporan Penjualan:
+    - Pilihan cepat: [Hari Ini] [7 Hari Terakhir] [Bulan Ini] [Semua Waktu].
+
+[ ] 3.3 Daftar 5 Buket Bunga Terlaris (Best Seller Leaderboard):
+    - Menampilkan nama buket, jumlah terjual, dan total kontribusi omset.
+
+[ ] 3.4 Rincian Distribusi Metode Pembayaran:
+    - Perbandingan transaksi sukses melalui QRIS Instan vs Transfer Bank BCA.
+
+================================================================================
+BAGIAN 4: PENINGKATAN BACKEND PHP NATIVE (STANDALONE ELOQUENT ORM)
+================================================================================
+Fokus: Menyiapkan API endpoint dan skema database MySQL untuk melayani fitur admin di atas.
+
+[ ] 4.1 Pembaruan Skema Database MySQL (Tabel 'pesanan'):
+    - Tambah kolom: jenis_kurir (VARCHAR 50).
+    - Tambah kolom: nama_kurir (VARCHAR 100).
+    - Tambah kolom: telepon_kurir (VARCHAR 30).
+    - Tambah kolom: nomor_resi (VARCHAR 100).
+    - Tambah kolom: estimasi_jam_kirim (VARCHAR 50).
+
+[ ] 4.2 Endpoint Manajemen Status & Logistik Pesanan:
+    - PUT /api/v1/pesanan/{id}/status
+      Payload: status, jenis_kurir, nama_kurir, telepon_kurir, nomor_resi.
+
+[ ] 4.3 Endpoint CRUD Produk Bunga (Layanan Katalog / Admin):
+    - POST   /api/v1/produk           (Tambah produk bunga baru).
+    - PUT    /api/v1/produk/{id}      (Perbarui detail bunga & stok).
+    - PATCH  /api/v1/produk/{id}/stok (Penyesuaian stok cepat + / -).
+    - DELETE /api/v1/produk/{id}      (Hapus / nonaktifkan bunga).
+
+[ ] 4.4 Endpoint Laporan Analitik Lanjutan (Layanan Admin):
+    - GET /api/v1/admin/laporan?periode=hari_ini|pekan_ini|bulan_ini
+      Menghasilkan agregasi omset riil, daftar pesanan mendesak, dan best seller.
+
+================================================================================
+URUTAN PENGERJAAN SATU PERSATU:
+--------------------------------------------------------------------------------
+1. Eksekusi Bagian 4.1 & 4.2: Pembaruan skema database MySQL & backend endpoint alur pesanan & kurir.
+2. Eksekusi Bagian 1: Pembuatan antarmuka Tab 1 (Tabel Pesanan, Alur Status Florist, Modal Kurir & WhatsApp).
+3. Eksekusi Bagian 4.3: Backend CRUD produk bunga.
+4. Eksekusi Bagian 2: Pembuatan antarmuka Tab 2 (Form Input Bunga Baru & Quick Stock Adjust).
+5. Eksekusi Bagian 4.4: Backend agregasi laporan & analitik.
+6. Eksekusi Bagian 3: Pembuatan antarmuka Tab 3 (Laporan Omset, Filter Waktu, Best Seller).
+7. Verifikasi Akhir: flutter analyze (0 error) & flutter test.
+================================================================================

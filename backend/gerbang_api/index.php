@@ -20,6 +20,27 @@ use WebeeFlorist\Layanan\Admin\Rute\RuteAdmin;
 TanggapanJson::catatWaktuMulai();
 PenjagaKeamanan::terapkan();
 
+// Penanganan berkas statis media publik (/unggah/...)
+$jalurUri = urldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH));
+if (str_starts_with($jalurUri, '/unggah/')) {
+    $jalurAsli = realpath(__DIR__ . '/..' . $jalurUri);
+    $folderUnggahAsli = realpath(__DIR__ . '/../unggah');
+
+    if ($jalurAsli && $folderUnggahAsli) {
+        $lokasiBerkas = str_replace('\\', '/', $jalurAsli);
+        $folderUnggah = str_replace('\\', '/', $folderUnggahAsli);
+
+        if (str_starts_with($lokasiBerkas, $folderUnggah) && is_file($lokasiBerkas)) {
+            $tipeMime = mime_content_type($lokasiBerkas) ?: 'application/octet-stream';
+            header("Access-Control-Allow-Origin: *");
+            header("Content-Type: $tipeMime");
+            header("Cache-Control: public, max-age=604800");
+            readfile($lokasiBerkas);
+            exit;
+        }
+    }
+}
+
 Aplikasi::inisialisasi();
 BasisData::inisialisasi();
 

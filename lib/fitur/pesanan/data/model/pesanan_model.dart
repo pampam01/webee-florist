@@ -39,7 +39,7 @@ class ItemPesananModel {
       subtotal: json['subtotal'] != null
           ? double.tryParse(json['subtotal'].toString()) ?? 0.0
           : 0.0,
-      namaProdukSnapshot: json['nama_produk_snapshot'],
+      namaProdukSnapshot: json['nama_produk_snapshot'] ?? json['nama_produk'],
       produk: json['produk'] != null && json['produk'] is Map<String, dynamic>
           ? ProdukBungaModel.fromJson(json['produk'])
           : null,
@@ -74,6 +74,11 @@ class PesananModel {
   final String? tanggalKirim;
   final String? metodePembayaran;
   final String? stempelWaktu;
+  final String? jenisKurir;
+  final String? namaKurir;
+  final String? teleponKurir;
+  final String? nomorResi;
+  final String? estimasiJamKirim;
   final List<ItemPesananModel> itemPesanan;
 
   const PesananModel({
@@ -91,11 +96,16 @@ class PesananModel {
     this.tanggalKirim,
     this.metodePembayaran,
     this.stempelWaktu,
+    this.jenisKurir,
+    this.namaKurir,
+    this.teleponKurir,
+    this.nomorResi,
+    this.estimasiJamKirim,
     this.itemPesanan = const [],
   });
 
   factory PesananModel.fromJson(Map<String, dynamic> json) {
-    var rawItems = json['item_pesanan'] ?? json['items'];
+    var rawItems = json['item_pesanan'] ?? json['items'] ?? json['item'];
     List<ItemPesananModel> parsedItems = [];
     if (rawItems is List) {
       parsedItems = rawItems.map((e) => ItemPesananModel.fromJson(e)).toList();
@@ -106,7 +116,7 @@ class PesananModel {
       nomorPesanan: json['nomor_pesanan'] ?? '',
       penggunaId: json['pengguna_id'] is int
           ? json['pengguna_id']
-          : int.tryParse(json['pengguna_id'].toString()) ?? 0,
+          : (json['id_pelanggan'] is int ? json['id_pelanggan'] : int.tryParse(json['pengguna_id']?.toString() ?? json['id_pelanggan']?.toString() ?? '0') ?? 0),
       totalHarga: json['total_harga'] != null
           ? double.tryParse(json['total_harga'].toString()) ?? 0.0
           : 0.0,
@@ -115,15 +125,20 @@ class PesananModel {
           : 0.0,
       grandTotal: json['grand_total'] != null
           ? double.tryParse(json['grand_total'].toString()) ?? 0.0
-          : 0.0,
+          : (json['total_harga'] != null ? double.tryParse(json['total_harga'].toString()) ?? 0.0 : 0.0),
       status: json['status'] ?? 'menunggu_pembayaran',
       namaPenerima: json['nama_penerima'] ?? '',
       teleponPenerima: json['telepon_penerima'] ?? '',
       alamatPengiriman: json['alamat_pengiriman'] ?? '',
-      pesanKartuUcapan: json['pesan_kartu_ucapan'],
-      tanggalKirim: json['tanggal_kirim'],
+      pesanKartuUcapan: json['pesan_kartu_ucapan'] ?? json['kartu_ucapan'],
+      tanggalKirim: json['tanggal_kirim'] ?? json['tanggal_pengiriman'],
       metodePembayaran: json['metode_pembayaran'],
       stempelWaktu: json['created_at'] ?? json['stempel_waktu'],
+      jenisKurir: json['jenis_kurir'],
+      namaKurir: json['nama_kurir'],
+      teleponKurir: json['telepon_kurir'],
+      nomorResi: json['nomor_resi'],
+      estimasiJamKirim: json['estimasi_jam_kirim'],
       itemPesanan: parsedItems,
     );
   }
@@ -143,11 +158,23 @@ class PesananModel {
       'pesan_kartu_ucapan': pesanKartuUcapan,
       'tanggal_kirim': tanggalKirim,
       'metode_pembayaran': metodePembayaran,
+      'jenis_kurir': jenisKurir,
+      'nama_kurir': namaKurir,
+      'telepon_kurir': teleponKurir,
+      'nomor_resi': nomorResi,
+      'estimasi_jam_kirim': estimasiJamKirim,
     };
   }
 
   PesananModel copyWith({
     String? status,
+    String? jenisKurir,
+    String? namaKurir,
+    String? teleponKurir,
+    String? nomorResi,
+    String? estimasiJamKirim,
+    String? pesanKartuUcapan,
+    String? tanggalKirim,
   }) {
     return PesananModel(
       id: id,
@@ -160,10 +187,15 @@ class PesananModel {
       namaPenerima: namaPenerima,
       teleponPenerima: teleponPenerima,
       alamatPengiriman: alamatPengiriman,
-      pesanKartuUcapan: pesanKartuUcapan,
-      tanggalKirim: tanggalKirim,
+      pesanKartuUcapan: pesanKartuUcapan ?? this.pesanKartuUcapan,
+      tanggalKirim: tanggalKirim ?? this.tanggalKirim,
       metodePembayaran: metodePembayaran,
       stempelWaktu: stempelWaktu,
+      jenisKurir: jenisKurir ?? this.jenisKurir,
+      namaKurir: namaKurir ?? this.namaKurir,
+      teleponKurir: teleponKurir ?? this.teleponKurir,
+      nomorResi: nomorResi ?? this.nomorResi,
+      estimasiJamKirim: estimasiJamKirim ?? this.estimasiJamKirim,
       itemPesanan: itemPesanan,
     );
   }

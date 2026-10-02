@@ -32,11 +32,46 @@ class RepositoriPesanan extends RepositoriDasar
         return $kueri->first();
     }
 
-    public function ubahStatus(int $idPesanan, string $statusBaru): bool
+    public function ambilSemuaPesananUntukAdmin(?string $status = null, ?string $cari = null): Collection
+    {
+        $kueri = Pesanan::with(['item', 'pelanggan', 'pembayaran'])->orderBy('created_at', 'desc');
+
+        if ($status !== null && $status !== '' && $status !== 'semua') {
+            $kueri->where('status', $status);
+        }
+
+        if ($cari !== null && trim($cari) !== '') {
+            $kataKunci = '%' . trim($cari) . '%';
+            $kueri->where(function ($q) use ($kataKunci) {
+                $q->where('nomor_pesanan', 'LIKE', $kataKunci)
+                  ->orWhere('nama_penerima', 'LIKE', $kataKunci)
+                  ->orWhere('telepon_penerima', 'LIKE', $kataKunci);
+            });
+        }
+
+        return $kueri->get();
+    }
+
+    public function ubahStatus(int $idPesanan, string $statusBaru, array $dataLogistik = []): bool
     {
         $pesanan = Pesanan::find($idPesanan);
         if ($pesanan) {
             $pesanan->status = $statusBaru;
+            if (!empty($dataLogistik['jenis_kurir'])) {
+                $pesanan->jenis_kurir = $dataLogistik['jenis_kurir'];
+            }
+            if (!empty($dataLogistik['nama_kurir'])) {
+                $pesanan->nama_kurir = $dataLogistik['nama_kurir'];
+            }
+            if (!empty($dataLogistik['telepon_kurir'])) {
+                $pesanan->telepon_kurir = $dataLogistik['telepon_kurir'];
+            }
+            if (!empty($dataLogistik['nomor_resi'])) {
+                $pesanan->nomor_resi = $dataLogistik['nomor_resi'];
+            }
+            if (!empty($dataLogistik['estimasi_jam_kirim'])) {
+                $pesanan->estimasi_jam_kirim = $dataLogistik['estimasi_jam_kirim'];
+            }
             return $pesanan->save();
         }
         return false;

@@ -1,304 +1,360 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:webee_florist/fitur/admin/data/model/ringkasan_admin_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webee_florist/fitur/admin/presentasi/penyedia/penyedia_admin.dart';
+import 'package:webee_florist/fitur/admin/presentasi/widget/bilah_sisi_admin.dart';
+import 'package:webee_florist/fitur/admin/presentasi/widget/tab_katalog_produk_admin.dart';
+import 'package:webee_florist/fitur/admin/presentasi/widget/tab_pesanan_transaksi_admin.dart';
+import 'package:webee_florist/fitur/admin/presentasi/widget/tab_ringkasan_analitik_admin.dart';
 import 'package:webee_florist/fitur/pesanan/presentasi/penyedia/penyedia_pesanan.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
-import 'package:webee_florist/inti/utilitas/format_rupiah.dart';
 
-class HalamanDashboardAdmin extends ConsumerWidget {
+class HalamanDashboardAdmin extends ConsumerStatefulWidget {
   const HalamanDashboardAdmin({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ringkasanAsync = ref.watch(ringkasanAdminProvider);
-    final riwayatPesananAsync = ref.watch(riwayatPesananProvider);
+  ConsumerState<HalamanDashboardAdmin> createState() => _HalamanDashboardAdminState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Panel Administrator Florist'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              ref.invalidate(ringkasanAdminProvider);
-              ref.invalidate(riwayatPesananProvider);
-            },
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(ringkasanAdminProvider);
-          ref.invalidate(riwayatPesananProvider);
-        },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Banner Omset Utama
-              ringkasanAsync.when(
-                data: (RingkasanAdminModel ringkasan) => Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: WarnaAplikasi.gradienUtama,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: WarnaAplikasi.utama.withValues(alpha: 0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.monetization_on_outlined, color: WarnaAplikasi.aksenEmas, size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'TOTAL OMSET TOKO BUNGA',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        FormatRupiah.format(ringkasan.totalOmset),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Dari ${ringkasan.totalPesanan} transaksi bunga berhasil',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const SizedBox(),
-              ),
+class _HalamanDashboardAdminState extends ConsumerState<HalamanDashboardAdmin> {
+  int _indeksTabAktif = 0; // Default Tab Utama: Ringkasan & Analitik
+  final GlobalKey<ScaffoldState> _kunciScaffold = GlobalKey<ScaffoldState>();
 
-              const SizedBox(height: 20),
+  String _ambilJudulTab(int indeks) {
+    switch (indeks) {
+      case 0:
+        return 'Ringkasan & Analitik';
+      case 1:
+        return 'Pesanan Masuk & Logistik Kurir';
+      case 2:
+        return 'Katalog Produk & Varian Bunga';
+      case 3:
+        return 'Pelanggan & CRM';
+      case 4:
+        return 'Laporan & Ekspor';
+      case 5:
+        return 'Pengaturan Toko Florist';
+      default:
+        return 'Panel Administrator';
+    }
+  }
 
-              // Kartu-kartu Metrik 2 Kolom
-              ringkasanAsync.when(
-                data: (RingkasanAdminModel ringkasan) => GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.4,
+  Widget _buatKontenTab(int indeks) {
+    switch (indeks) {
+      case 0:
+        return TabRingkasanAnalitikAdmin(
+          onBukaTabPesanan: () {
+            setState(() => _indeksTabAktif = 1);
+          },
+        );
+
+      case 1:
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(daftarPesananAdminProvider);
+            ref.invalidate(ringkasanAdminProvider);
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buatKartuMetrik(
-                      judul: 'Pesanan Dirangkai',
-                      nilai: '${ringkasan.pesananDiproses}',
-                      ikon: Icons.brush_outlined,
-                      warna: WarnaAplikasi.info,
-                    ),
-                    _buatKartuMetrik(
-                      judul: 'Menunggu Bayar',
-                      nilai: '${ringkasan.pesananMenungguBayar}',
-                      ikon: Icons.hourglass_top,
-                      warna: WarnaAplikasi.peringatan,
-                    ),
-                    _buatKartuMetrik(
-                      judul: 'Total Pelanggan',
-                      nilai: '${ringkasan.totalPelanggan}',
-                      ikon: Icons.people_outline,
-                      warna: WarnaAplikasi.utama,
-                    ),
-                    _buatKartuMetrik(
-                      judul: 'Varian Bunga Aktif',
-                      nilai: '${ringkasan.totalProdukAktif}',
-                      ikon: Icons.local_florist_outlined,
-                      warna: WarnaAplikasi.aksenMawar,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pesanan Masuk, Transaksi & Logistik Kurir',
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: WarnaAplikasi.teksUtama,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Kelola konfirmasi bayar, alur perakitan buket, armada mobil/motor, kartu ucapan kaligrafi, dan disposisi WA driver.',
+                          style: TextStyle(fontSize: 12, color: WarnaAplikasi.teksSekunder),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                loading: () => const SizedBox(),
-                error: (_, __) => const SizedBox(),
+                const SizedBox(height: 20),
+                const TabPesananTransaksiAdmin(),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+        );
+
+      case 2:
+        return const TabKatalogProdukAdmin();
+
+      case 3:
+        return _buatPlaceholderTab(
+          judul: 'Pelanggan & Riwayat CRM',
+          bagian: 'FITUR MENDATANG',
+          deskripsi:
+              'Basis data pelanggan setia, alamat langganan pengiriman, riwayat pesan ucapan khusus, dan poin keanggotaan VIP Webee Florist.',
+          ikon: Icons.people_outline,
+        );
+
+      case 4:
+        return _buatPlaceholderTab(
+          judul: 'Laporan Penjualan & Ekspor Dokumen',
+          bagian: 'BAGIAN 3',
+          deskripsi:
+              'Unduh rekap pembukuan omset bulanan, laporan audit transaksi kasir, analisis tren bunga terlaris, dan ekspor ke format Excel / PDF.',
+          ikon: Icons.analytics_outlined,
+        );
+
+      case 5:
+        return _buatPlaceholderTab(
+          judul: 'Pengaturan Toko & Workshop Florist',
+          bagian: 'PENGATURAN',
+          deskripsi:
+              'Pengaturan profil workshop Webee Florist, nomor rekening pembayaran QRIS/BCA, jam buka operasional, dan template otomatis pesan WhatsApp.',
+          ikon: Icons.settings_outlined,
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buatPlaceholderTab({
+    required String judul,
+    required String bagian,
+    required String deskripsi,
+    required IconData ikon,
+  }) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 480),
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: WarnaAplikasi.garisBatas),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 15,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: WarnaAplikasi.aksenMerahMuda,
+                borderRadius: BorderRadius.circular(16),
               ),
-
-              const SizedBox(height: 28),
-
-              // Manajemen Pesanan Terkini
-              const Text(
-                'Manajemen Status Pesanan',
-                style: TextStyle(
-                  fontSize: 18,
+              child: Icon(ikon, size: 40, color: WarnaAplikasi.utama),
+            ),
+            const SizedBox(height: 18),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: WarnaAplikasi.aksenEmas.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: WarnaAplikasi.aksenEmas.withValues(alpha: 0.4)),
+              ),
+              child: Text(
+                bagian,
+                style: const TextStyle(
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: WarnaAplikasi.utama,
+                  letterSpacing: 0.8,
+                  color: WarnaAplikasi.aksenEmas,
                 ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Ubah status alur kerja buket bunga dari perakitan hingga sampai di tangan pelanggan.',
-                style: TextStyle(fontSize: 12, color: WarnaAplikasi.teksSekunder),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              judul,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.playfairDisplay(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: WarnaAplikasi.teksUtama,
               ),
-              const SizedBox(height: 14),
-
-              riwayatPesananAsync.when(
-                data: (daftar) {
-                  if (daftar.isEmpty) {
-                    return const Text('Belum ada pesanan masuk.');
-                  }
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: daftar.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final p = daftar[index];
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: WarnaAplikasi.garisBatas),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  p.nomorPesanan,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: WarnaAplikasi.utama,
-                                  ),
-                                ),
-                                Text(
-                                  FormatRupiah.format(p.grandTotal),
-                                  style: const TextStyle(fontWeight: FontWeight.w800),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Penerima: ${p.namaPenerima} | Status saat ini: ${p.status}',
-                              style: const TextStyle(fontSize: 12, color: WarnaAplikasi.teksSekunder),
-                            ),
-                            const SizedBox(height: 10),
-                            Wrap(
-                              spacing: 8,
-                              children: [
-                                if (p.status != 'diproses')
-                                  OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                    onPressed: () {
-                                      ref
-                                          .read(buatPesananProvider.notifier)
-                                          .perbaruiStatusPesanan(p.id, 'diproses');
-                                    },
-                                    child: const Text('Rangkai Bunga', style: TextStyle(fontSize: 11)),
-                                  ),
-                                if (p.status != 'dikirim')
-                                  OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                    onPressed: () {
-                                      ref
-                                          .read(buatPesananProvider.notifier)
-                                          .perbaruiStatusPesanan(p.id, 'dikirim');
-                                    },
-                                    child: const Text('Kirim Kurir', style: TextStyle(fontSize: 11)),
-                                  ),
-                                if (p.status != 'selesai')
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                    onPressed: () {
-                                      ref
-                                          .read(buatPesananProvider.notifier)
-                                          .perbaruiStatusPesanan(p.id, 'selesai');
-                                    },
-                                    child: const Text('Tandai Selesai', style: TextStyle(fontSize: 11)),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, _) => Text('Error: $err'),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              deskripsi,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: WarnaAplikasi.teksSekunder,
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buatKartuMetrik({
-    required String judul,
-    required String nilai,
-    required IconData ikon,
-    required Color warna,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: WarnaAplikasi.garisBatas),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 900;
+
+        return Scaffold(
+          key: _kunciScaffold,
+          backgroundColor: WarnaAplikasi.latarBelakang,
+          // Drawer untuk tampilan Mobile / Tablet
+          drawer: isDesktop
+              ? null
+              : Drawer(
+                  child: BilahSisiAdmin(
+                    indeksTerpilih: _indeksTabAktif,
+                    onPilihIndeks: (idx) => setState(() => _indeksTabAktif = idx),
+                    onTutupDrawer: () => Navigator.of(context).pop(),
+                  ),
+                ),
+          appBar: isDesktop
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  scrolledUnderElevation: 1,
+                  leading: IconButton(
+                    icon: const Icon(Icons.menu, color: WarnaAplikasi.utama),
+                    onPressed: () => _kunciScaffold.currentState?.openDrawer(),
+                  ),
+                  title: Text(
+                    _ambilJudulTab(_indeksTabAktif),
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: WarnaAplikasi.utama,
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.refresh, color: WarnaAplikasi.utama),
+                      onPressed: () {
+                        ref.invalidate(ringkasanAdminProvider);
+                        ref.invalidate(daftarPesananAdminProvider);
+                      },
+                    ),
+                  ],
+                ),
+          body: Row(
             children: [
-              Icon(ikon, color: warna, size: 20),
-              const SizedBox(width: 6),
+              // Sidebar Tetap pada Desktop Layar Lebar
+              if (isDesktop)
+                BilahSisiAdmin(
+                  indeksTerpilih: _indeksTabAktif,
+                  onPilihIndeks: (idx) => setState(() => _indeksTabAktif = idx),
+                ),
+
+              // Area Konten Utama Tab
               Expanded(
-                child: Text(
-                  judul,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11, color: WarnaAplikasi.teksSekunder),
+                child: Column(
+                  children: [
+                    // Top Bar Desktop
+                    if (isDesktop)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(bottom: BorderSide(color: WarnaAplikasi.garisBatas)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Portal Admin',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: WarnaAplikasi.teksRedup,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.chevron_right, size: 16, color: WarnaAplikasi.teksRedup),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _ambilJudulTab(_indeksTabAktif),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: WarnaAplikasi.utama,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: WarnaAplikasi.aksenMerahMuda,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.circle, size: 8, color: WarnaAplikasi.sukses),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Workshop Florist Buka',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: WarnaAplikasi.utama,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                IconButton(
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: WarnaAplikasi.latarBelakang,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      side: const BorderSide(color: WarnaAplikasi.garisBatas),
+                                    ),
+                                  ),
+                                  icon: const Icon(Icons.refresh, size: 18, color: WarnaAplikasi.utama),
+                                  tooltip: 'Segarkan Seluruh Data',
+                                  onPressed: () {
+                                    ref.invalidate(ringkasanAdminProvider);
+                                    ref.invalidate(daftarPesananAdminProvider);
+                                    ref.invalidate(riwayatPesananProvider);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // Konten Tab Aktif
+                    Expanded(
+                      child: _buatKontenTab(_indeksTabAktif),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            nilai,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w900,
-              color: warna,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webee_florist/fitur/katalog_bunga/data/model/produk_model.dart';
+import 'package:webee_florist/fitur/katalog_bunga/presentasi/widget/slider_foto_bunga.dart';
 import 'package:webee_florist/fitur/keranjang/presentasi/penyedia/penyedia_keranjang.dart';
 import 'package:webee_florist/inti/konstanta/warna_aplikasi.dart';
 import 'package:webee_florist/inti/utilitas/format_rupiah.dart';
@@ -68,31 +69,12 @@ class _HalamanDetailProdukState extends ConsumerState<HalamanDetailProduk> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Produk
-            SizedBox(
-              height: 300,
-              width: double.infinity,
-              child: widget.produk.urlGambar != null && widget.produk.urlGambar!.isNotEmpty
-                  ? Image.network(
-                      widget.produk.urlGambar!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (ctx, err, stack) => Container(
-                        color: Colors.grey.shade100,
-                        child: const Icon(
-                          Icons.local_florist,
-                          size: 72,
-                          color: WarnaAplikasi.utama,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: Colors.grey.shade100,
-                      child: const Icon(
-                        Icons.local_florist,
-                        size: 72,
-                        color: WarnaAplikasi.utama,
-                      ),
-                    ),
+            // Slider Foto Bunga Interaktif (Dapat Digeser)
+            SliderFotoBunga(
+              daftarFoto: widget.produk.semuaFoto,
+              tinggi: 340,
+              tampilkanThumbnailBawah: true,
+              borderRadius: BorderRadius.zero,
             ),
 
             // Informasi Produk

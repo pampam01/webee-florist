@@ -20,6 +20,10 @@ class RutePesanan
                 $kontroller->riwayat();
             });
 
+            $router->get('/admin/semua', function () use ($kontroller) {
+                $kontroller->semuaPesananAdmin();
+            });
+
             $router->get('/(\d+)', function ($id) use ($kontroller) {
                 $kontroller->detail((int) $id);
             });

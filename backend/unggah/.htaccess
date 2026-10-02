@@ -1,0 +1,21 @@
+# Keamanan Folder Unggahan Webee Florist
+# Mencegah eksekusi file skrip berbahaya di direktori media publik
+
+<FilesMatch "\.(php|php3|php4|php5|php7|php8|phtml|phar|pl|py|cgi|asp|sh|js|exe)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Matikan eksekusi script engine jika modul aktif
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Larang penjelajahan isi direktori oleh publik
+Options -Indexes

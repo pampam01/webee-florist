@@ -13,6 +13,15 @@ class WarnaAplikasi {
   static const Color aksenMerahMuda = Color(0xFFF3E5E3);
   static const Color aksenEmas = Color(0xFFC59B27);
 
+  // Alias Semantik Bahasa Indonesia
+  static const Color coklatMawar = Color(0xFF6B4435);
+  static const Color emasKlasik = Color(0xFFC59B27);
+  static const Color kremLatar = Color(0xFFFAF7F2);
+  static const Color putihHangat = Colors.white;
+  static const Color hitamMewah = Color(0xFF2D1F1B);
+  static const Color abuTua = Color(0xFF7D6B64);
+  static const Color hijauStatus = Color(0xFF4A7C59);
+
   // Latar Belakang Hangat Kanvas Botani (Bukan Putih Polos)
   static const Color latarBelakang = Color(0xFFFAF7F2);
   static const Color kartu = Colors.white;

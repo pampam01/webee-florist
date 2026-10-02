@@ -23,6 +23,11 @@ class Pesanan extends ModelDasar
         'alamat_pengiriman',
         'kartu_ucapan',
         'tanggal_pengiriman',
+        'jenis_kurir',
+        'nama_kurir',
+        'telepon_kurir',
+        'nomor_resi',
+        'estimasi_jam_kirim',
     ];
 
     protected $casts = [

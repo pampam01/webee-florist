@@ -1,0 +1,143 @@
+================================================================================
+ATURAN TETAP & DOKUMENTASI SISTEM WEBEE FLORIST
+================================================================================
+Dokumen ini adalah acuan baku dan tetap untuk seluruh instruksi serta prompt 
+pengembangan proyek "Webee Florist by utiy" berikutnya.
+
+--------------------------------------------------------------------------------
+1. STATUS PROGRESS TERAKHIR (KEMARIN SAMPAI MANA)
+--------------------------------------------------------------------------------
+- Penghapusan folder sub-flutter ganda: Seluruh proyek Flutter kini berada langsung 
+  di root workspace (d:\usaha\webee-florist\), sedangkan backend berada di 
+  folder d:\usaha\webee-florist\backend\.
+- Integrasi Logo Resmi: Logo resmi horizontal dan emblem persegi telah diekstrak, 
+  disimpan di assets/logo/, dan terdaftar di pubspec.yaml.
+- Pembuatan Master Landing Page Web:
+  * Seksi Hero dengan estetika French Arch, tipografi Playfair Display, dan pilar garansi.
+  * Seksi Kategori bunga pilihan.
+  * Seksi Produk Unggulan terkoneksi langsung ke database MySQL melalui Riverpod.
+  * Seksi Cerita & Filosofi Atelier Florist Utiy berbalut emblem segel botani.
+  * Seksi 4 Keunggulan Layanan Florist.
+  * Seksi Ulasan & Kesan Pelanggan.
+  * Kaki Halaman (Footer) Web komprehensif.
+- UX Khusus Web:
+  * Menggunakan Top Navigation Bar (BilahNavigasiAtas), bukan Bottom Navigation Bar.
+  * Pengunjung dapat bebas menjelajah dan memasukkan produk ke keranjang tanpa 
+    wajib login terlebih dahulu (no-login barrier).
+  * Autentikasi (DialogMasukCepat) baru dipicu saat pengunjung menekan tombol 
+    Checkout di LaciKeranjangWeb (slide-over drawer).
+- Pembersihan Emoji Menyeluruh:
+  * Seluruh emoji kasual (🌸, 👑, 🛍️, 💐, 📦, dll.) telah dihapus 100% dari 
+    seluruh antarmuka, dialog, snackbar, dan teks aplikasi, digantikan dengan 
+    ikon botani Material Icons bernuansa emas-cokelat serta tipografi klasik.
+- Optimasi Penuh SEO (Search Engine Optimization):
+  * web/index.html dilengkapi Meta Tags lengkap, Open Graph, Twitter Cards, 
+    Schema.org JSON-LD (Florist), dan struktur semantik HTML crawlable.
+  * web/robots.txt dan web/sitemap.xml siap untuk perayap mesin pencari.
+  * web/manifest.json beridentitas resmi Webee Florist.
+- Verifikasi Kode:
+  * flutter analyze: 0 issues (lulus mutlak).
+  * flutter test: 100% all tests passed (responsif multi-resolusi).
+  * flutter build web --release: Sukses dibangun di build/web (siap hosting).
+- Knowledge Graph:
+  * Modul graphify telah memetakan 964 nodes, 1067 edges, dan 90 communities.
+
+--------------------------------------------------------------------------------
+2. IDENTITAS & TEMA VISUAL APLIKASI
+--------------------------------------------------------------------------------
+- Konsep & Tema:
+  Klasik Romantis Perancis & Abad Pertengahan Seniman Botani 
+  (French Romantic & Medieval Artisan Floristry by utiy).
+- Suasana & Tone of Voice:
+  Mewah, elegan, puitis, hangat, terpercaya, dan eksklusif khas atelier bunga Paris.
+- Palet Warna Resmi (WarnaAplikasi):
+  * French Chestnut Brown  : #6B4435 (Warna Utama / Brand)
+  * Warm Alabaster Linen   : #FAF7F2 (Latar Belakang Utama / Kertas Perkamen)
+  * Antique Gold Accent    : #C59B27 (Aksen Kemewahan / Badge / Emas Antik)
+  * Dusty Parisian Rose    : #C87D75 (Sentuhan Romantisme Mawar)
+  * Deep Espresso Charcoal : #2D1F1B (Teks Utama Kontras Tinggi)
+  * Garis Batas / Border   : #E8E2D9 (Garis Pemisah Halus Alabaster)
+- Tipografi:
+  * Headline / Display / Judul Seksi : Playfair Display (Serif Klasik)
+  * Body Text / Konten / Input / Tombol : Plus Jakarta Sans (Sans-serif Modern)
+- Larangan Visual:
+  DILARANG menggunakan emoji kasual/chat di dalam tampilan web dan aplikasi. 
+  Gunakan ikon Material yang elegan atau kurasi terminologi klasik.
+
+--------------------------------------------------------------------------------
+3. GAYA ARSITEKTUR SISTEM
+--------------------------------------------------------------------------------
+Sistem menggunakan pola "Modular Monorepo Microservices":
+
+A. FRONTEND (Flutter di Root):
+   - Pola: Feature-First Clean Architecture.
+   - State Management: Flutter Riverpod (Notifier & StateNotifierProvider).
+   - HTTP Network Layer: Dio Client dengan Interceptor terpusat (KlienApi) 
+     dan sealed-class wrapper (HasilApi: ApiSukses, ApiGagal, ApiMemuat).
+   - Modul Fitur (lib/fitur/):
+     * landing_page/ : Master landing web, navbar atas, hero, drawer keranjang.
+     * katalog_bunga/: Model produk/kategori, repositori, kartu produk, detail.
+     * keranjang/    : State keranjang belanja pelanggan, mutasi kuantitas.
+     * pesanan/      : Checkout, kartu ucapan personal, riwayat status pesanan.
+     * autentikasi/  : Sesi JWT, login, register, penyimpanan token aman.
+     * admin/        : Panel ringkasan omset dan kontrol alur perakitan pesanan.
+     * profil/       : Informasi akun, pengalih peran simulasi (Role Switcher).
+   - Bahasa Kode: Seluruh penamaan file, fungsi, dan kelas menggunakan 
+     Bahasa Indonesia yang rapi dan konsisten.
+   - Platform Target Awal: Web (Desktop & Mobile Browser responsive).
+
+B. BACKEND (PHP Native di backend/):
+   - Pola: Pure PHP Native Microservices (tanpa framework Laravel monolitik).
+   - ORM Database Wajib: Standalone Eloquent ORM (illuminate/database) 
+     melalui Capsule Manager untuk interaksi database MySQL yang aman dan bersih.
+   - API Gateway (backend/gerbang_api/):
+     * Titik masuk tunggal router RESTful berbasis Bramus Router.
+     * Penjaga keamanan CORS lintas platform (PenjagaKeamanan.php).
+     * Middleware Stateless JWT (firebase/php-jwt) untuk otentikasi.
+   - Mikroservis Independen (backend/layanan/):
+     1. layanan_autentikasi : Register, Login, JWT Me, Profil.
+     2. layanan_katalog     : Kategori Bunga, Produk Buket, Stok, Filter.
+     3. layanan_keranjang   : Sinkronisasi Keranjang Belanja Pelanggan.
+     4. layanan_pesanan     : Checkout Pesanan, Kartu Ucapan, Nomor Invoice.
+     5. layanan_pembayaran  : Rekening Pembayaran, QRIS, Bukti Bayar.
+     6. layanan_admin       : Agregasi Omset, Metrik Toko, Status Alur Bunga.
+   - Shared Kernel (backend/layanan_bersama/):
+     * BasisData.php (Koneksi Capsule ORM ke MySQL).
+     * SkemaBasisData.php (Migrasi 7 tabel terstruktur).
+     * BenihAwal.php (Seeder akun admin, pelanggan, kategori, dan buket).
+     * TanggapanJson.php (Amplop respon standar sukses/gagal korporat).
+   - CLI Toolkit (backend/perintah.php):
+     * php perintah.php status  (Cek koneksi & dependensi)
+     * php perintah.php migrasi (Eksekusi skema database)
+     * php perintah.php benih   (Isi data awal)
+     * php perintah.php rute    (Daftar endpoint mikroservis)
+
+--------------------------------------------------------------------------------
+4. ATURAN TETAP UNTUK PROMPT-PROMPT BERIKUTNYA
+--------------------------------------------------------------------------------
+1. Pertahankan Tema Klasik Romantis:
+   Semua penambahan widget, layout, maupun warna baru WAJIB merujuk ke 
+   konstanta WarnaAplikasi (#6B4435, #FAF7F2, #C59B27, #C87D75, #2D1F1B) dan 
+   Google Fonts Playfair Display / Plus Jakarta Sans.
+2. Bebas Emoji Kasual:
+   JANGAN memasukkan simbol emoji pada judul, tombol, snackbar, ataupun copy text. 
+   Gunakan ikon Material Icons resmi bernuansa mewah.
+3. Pertahankan Struktur Feature-First & Monorepo:
+   - Jangan membuat folder acak. Letakkan fitur baru di lib/fitur/<nama_fitur>/ 
+     dengan subfolder data/ dan presentasi/.
+   - Jika menambah endpoint backend, buat di backend/layanan/<nama_layanan>/ 
+     dan daftarkan di backend/gerbang_api/index.php.
+4. Gunakan Bahasa Indonesia Baku untuk Penamaan Kode:
+   Tetap gunakan Bahasa Indonesia yang bersih untuk nama file, model, repositori, 
+   dan provider.
+5. Pertahankan UX Web yang Elegan:
+   - Navigasi atas (BilahNavigasiAtas) tetap menjadi navigasi utama web.
+   - Alur katalog tetap terbuka untuk umum tanpa memaksakan login di awal.
+   - Keranjang belanja tetap menggunakan model slide-over drawer (LaciKeranjangWeb).
+6. Integritas Standalone Eloquent ORM:
+   Jangan menulis raw SQL query sembarangan; gunakan model Eloquent atau Capsule query 
+   builder agar aman dari SQL Injection dan konsisten.
+7. Jaga Kualitas Kode:
+   Setiap perubahan kode harus dipastikan selalu lolos "flutter analyze" dengan 
+   0 error dan 0 warning.
+================================================================================

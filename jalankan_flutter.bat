@@ -4,4 +4,4 @@ echo ========================================================
 echo   📱 MENJALANKAN APLIKASI FRONTEND FLUTTER WEBEE FLORIST 📱
 echo ========================================================
 cd /d "%~dp0"
-flutter run -d chrome
+flutter run -d web-server --web-port=5000

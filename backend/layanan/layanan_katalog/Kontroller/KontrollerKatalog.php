@@ -174,13 +174,102 @@ class KontrollerKatalog extends PengontrolDasar
                 'harga' => $data['harga'],
                 'stok' => $data['stok'],
                 'gambar_url' => $data['gambar_url'] ?? '',
-                'apakah_unggulan' => $data['apakah_unggulan'] ?? false,
-                'status_tersedia' => true,
+                'foto_galeri' => $data['foto_galeri'] ?? null,
+                'apakah_unggulan' => !empty($data['apakah_unggulan']),
+                'status_tersedia' => !empty($data['status_tersedia']),
             ]);
             $this->tanggapanSukses($baru, 'Produk bunga baru berhasil ditambahkan oleh Admin.', 201);
             return;
         }
 
         $this->tanggapanSukses(array_merge($data, ['id' => rand(10, 99)]), 'Produk berhasil ditambahkan (simulasi).', 201);
+    }
+
+    public function semuaProdukAdmin(): void
+    {
+        PenjagaPeran::hanyaAdmin();
+        $idKategori = $this->ambilQuery('kategori_id') ? (int) $this->ambilQuery('kategori_id') : null;
+        $cari = $this->ambilQuery('cari');
+
+        if (BasisData::periksaKoneksi()) {
+            try {
+                $produk = $this->repositori->ambilSemuaProdukAdmin($idKategori, $cari);
+                $this->tanggapanSukses($produk, 'Daftar semua produk bunga untuk admin berhasil dimuat.');
+                return;
+            } catch (Throwable $e) {}
+        }
+
+        // Jalankan daftarProduk reguler sebagai fallback
+        $this->daftarProduk();
+    }
+
+    public function perbaruiProduk(int $id): void
+    {
+        PenjagaPeran::hanyaAdmin();
+        $data = $this->ambilDataJson();
+
+        if (BasisData::periksaKoneksi()) {
+            $hasil = $this->repositori->perbaruiData($id, $data);
+            if ($hasil) {
+                $this->tanggapanSukses($hasil, 'Data produk bunga berhasil diperbarui.');
+                return;
+            }
+        }
+
+        $this->tanggapanSukses($data, 'Data produk berhasil diperbarui (simulasi).');
+    }
+
+    public function sesuaikanStok(int $id): void
+    {
+        PenjagaPeran::hanyaAdmin();
+        $data = $this->ambilDataJson();
+
+        $perubahan = isset($data['perubahan']) ? (int) $data['perubahan'] : null;
+        $stokBaru = isset($data['stok_baru']) ? (int) $data['stok_baru'] : null;
+        $statusTersedia = isset($data['status_tersedia']) ? (bool) $data['status_tersedia'] : null;
+
+        if (BasisData::periksaKoneksi()) {
+            $hasil = $this->repositori->sesuaikanStok($id, $perubahan, $stokBaru, $statusTersedia);
+            if ($hasil) {
+                $this->tanggapanSukses($hasil, 'Stok produk bunga berhasil disesuaikan.');
+                return;
+            }
+        }
+
+        $this->tanggapanSukses(null, 'Stok produk bunga berhasil disesuaikan (simulasi).');
+    }
+
+    public function hapusProduk(int $id): void
+    {
+        PenjagaPeran::hanyaAdmin();
+
+        if (BasisData::periksaKoneksi()) {
+            $berhasil = $this->repositori->hapusData($id);
+            if ($berhasil) {
+                $this->tanggapanSukses(null, 'Produk bunga berhasil dihapus.');
+                return;
+            }
+        }
+
+        $this->tanggapanSukses(null, 'Produk bunga berhasil dihapus (simulasi).');
+    }
+
+    public function unggahFoto(): void
+    {
+        PenjagaPeran::hanyaAdmin();
+
+        if (empty($_FILES['berkas']) && empty($_FILES['foto'])) {
+            $this->tanggapanGagal('Tidak ada berkas gambar yang dikirimkan.', 400);
+            return;
+        }
+
+        $berkas = $_FILES['berkas'] ?? $_FILES['foto'];
+
+        try {
+            $daftarUrl = \WebeeFlorist\Layanan\Katalog\Layanan\LayananUnggahBerkas::simpanBanyakFoto($berkas, 'produk');
+            $this->tanggapanSukses($daftarUrl, count($daftarUrl) . ' foto bunga berhasil diunggah.');
+        } catch (\Throwable $e) {
+            $this->tanggapanGagal('Gagal mengunggah foto: ' . $e->getMessage(), 422);
+        }
     }
 }

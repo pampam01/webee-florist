@@ -54,6 +54,7 @@ class SkemaBasisData
                 $tabel->decimal('harga', 15, 2);
                 $tabel->integer('stok')->default(0);
                 $tabel->string('gambar_url', 500)->nullable();
+                $tabel->text('foto_galeri')->nullable();
                 $tabel->boolean('apakah_unggulan')->default(false);
                 $tabel->boolean('status_tersedia')->default(true);
                 $tabel->timestamps();
@@ -61,6 +62,11 @@ class SkemaBasisData
                 $tabel->foreign('id_kategori')->references('id')->on('kategori_bunga')->onDelete('set null');
             });
             echo "  ✓ Tabel 'produk_bunga' berhasil dibuat.\n";
+        } else if ($skema->hasTable('produk_bunga') && !$skema->hasColumn('produk_bunga', 'foto_galeri')) {
+            $skema->table('produk_bunga', function (Blueprint $tabel) {
+                $tabel->text('foto_galeri')->nullable()->after('gambar_url');
+            });
+            echo "  ✓ Kolom 'foto_galeri' berhasil ditambahkan ke 'produk_bunga'.\n";
         }
 
         // 4. Item Keranjang
@@ -92,11 +98,35 @@ class SkemaBasisData
                 $tabel->text('alamat_pengiriman');
                 $tabel->text('kartu_ucapan')->nullable();
                 $tabel->date('tanggal_pengiriman')->nullable();
+                $tabel->string('jenis_kurir', 50)->nullable();
+                $tabel->string('nama_kurir', 100)->nullable();
+                $tabel->string('telepon_kurir', 30)->nullable();
+                $tabel->string('nomor_resi', 100)->nullable();
+                $tabel->string('estimasi_jam_kirim', 50)->nullable();
                 $tabel->timestamps();
 
                 $tabel->foreign('id_pelanggan')->references('id')->on('pengguna')->onDelete('cascade');
             });
             echo "  ✓ Tabel 'pesanan' berhasil dibuat.\n";
+        } else {
+            $skema->table('pesanan', function (Blueprint $tabel) use ($skema) {
+                if (!$skema->hasColumn('pesanan', 'jenis_kurir')) {
+                    $tabel->string('jenis_kurir', 50)->nullable()->after('tanggal_pengiriman');
+                }
+                if (!$skema->hasColumn('pesanan', 'nama_kurir')) {
+                    $tabel->string('nama_kurir', 100)->nullable()->after('jenis_kurir');
+                }
+                if (!$skema->hasColumn('pesanan', 'telepon_kurir')) {
+                    $tabel->string('telepon_kurir', 30)->nullable()->after('nama_kurir');
+                }
+                if (!$skema->hasColumn('pesanan', 'nomor_resi')) {
+                    $tabel->string('nomor_resi', 100)->nullable()->after('telepon_kurir');
+                }
+                if (!$skema->hasColumn('pesanan', 'estimasi_jam_kirim')) {
+                    $tabel->string('estimasi_jam_kirim', 50)->nullable()->after('nomor_resi');
+                }
+            });
+            echo "  ✓ Kolom logistik pengiriman pada tabel 'pesanan' berhasil diverifikasi.\n";
         }
 
         // 6. Item Pesanan
